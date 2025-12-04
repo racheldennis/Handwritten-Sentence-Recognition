@@ -19,7 +19,7 @@ from configs import Configs
 from model import CRNN, train_step, eval_step
 from inference_model import infer, CER, WER
 
-from utils.visualization import show_transformations
+from utils.visualization import show_transformations, show_predictions
 from utils.transforms import ResizeHeight
 from utils.vocab import Vocab
 
@@ -216,4 +216,6 @@ if args.test:
     ## TODO: Visualize predictions
 
     if args.show_predictions:
-        pass
+        images_batch, _, _, _ = next(iter(test_loader))
+
+        show_predictions(images_batch, predictions, truth)

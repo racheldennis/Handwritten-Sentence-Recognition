@@ -40,7 +40,10 @@ def collate_fn(batch, model):
         _, _, w = image.shape
         pad_width = max_width - w
 
-        padded = F.pad(image, (0, pad_width, 0, 0), value=0.0)
+        pad_left = pad_width // 2
+        pad_right = pad_width - pad_left
+
+        padded = F.pad(image, (pad_left, pad_right, 0, 0), value=0.0)
         padded_images.append(padded)
     
     # stack images into tensor (B, C, H, W)

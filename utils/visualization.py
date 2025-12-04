@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 def unnormalize(tensor):
     return tensor * 0.5 + 0.5
 
-def show_before_after(raw_image, transformed_image):
+def show_transformations(raw_image, transformed_image):
     plt.figure(figsize=(20, 4))
 
     # raw image
@@ -19,4 +19,14 @@ def show_before_after(raw_image, transformed_image):
     plt.imshow(image, cmap="gray")
     plt.axis("off")
 
-    plt.show()
+    plt.show(block=False)
+
+def show_predictions(images, predictions, labels, n=5):
+    for i in range(n):
+        image = unnormalize(images[i]).squeeze() # (1, H, W) -> (H, W)
+
+        plt.figure(figsize=(12, 2))
+        plt.imshow(image.cpu(), cmap="gray")
+        plt.title(f"Predicted: {predictions[i]}\nTrue: {labels[i]}")
+        plt.axis("off")  
+        plt.show(block=False)
