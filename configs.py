@@ -8,13 +8,13 @@ class Configs():
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
     # training hyperparameters
-    BATCH_SIZE = 64 # 16
+    BATCH_SIZE = 32 # 16
     LEARNING_RATE = 3e-4 # 1e-4
     EPOCHS = 50
     WEIGHT_DECAY = 1e-4
 
     # model hyperparameters
-    IMG_HEIGHT = 64 # 32
+    IMG_HEIGHT = 32 # 32
 
     # CTC parameters
     BLANK_LABEL = "-"
