@@ -197,7 +197,7 @@ if args.test:
     print("Running inference:")
 
     inference_model = CRNN(num_classes).to(configs.DEVICE)
-    inference_model.load_state_dict(torch.load(f"models/20251203-2243/model_12.pth", map_location=configs.DEVICE))
+    inference_model.load_state_dict(torch.load(f"models/20251204-0016/model_88.pth", map_location=configs.DEVICE))
 
     predictions, truth = infer(inference_model, test_loader, vocab, configs.DEVICE)
 
