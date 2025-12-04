@@ -56,7 +56,6 @@ def train_step(model, dataloader, criterion, optimizer, device):
 
     for images, labels, image_lengths, label_lengths in tqdm(dataloader, desc="| Training", leave=False):
         images = images.to(device)
-        print(labels[0])
         labels = labels.to(device)
 
         optimizer.zero_grad()
