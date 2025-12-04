@@ -11,20 +11,19 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
 from dataset import HandwrittenSentenceDataset
+from configs import Configs
 
 from utils.visualization import show_before_after
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(f"Device: {device}\n")
+configs = Configs()
+
+print(f"Device: {configs.DEVICE}\n")
 
 ## Load data
 
-LABEL_PATH = os.path.join("data", "ascii", "sentences.txt")
-IMAGE_FOLDER_PATH = os.path.join("data", "sentences")
+images, labels, vocab = [], [], set()
 
-images, labels = [], []
-
-with open(LABEL_PATH, "r") as file:
+with open(configs.LABEL_FILE, "r") as file:
     for line in tqdm(file.readlines(), desc="Loading dataset"):
         # skip documentation lines
         if line.startswith("#"):
@@ -40,11 +39,14 @@ with open(LABEL_PATH, "r") as file:
         image_folder_2 = line[0][:8].rstrip("-")
         image_file_name = line[0] + ".png"
 
-        image_path = os.path.join(IMAGE_FOLDER_PATH, image_folder_1, image_folder_2, image_file_name)
+        image_path = os.path.join(configs.DATA_FOLDER, image_folder_1, image_folder_2, image_file_name)
         label = line[-1].rstrip("\n").replace("|", " ")
 
         images.append(image_path)
         labels.append(label)
+        vocab.update(set(label))
+
+vocab = "".join(sorted(vocab))
 
 print("|", len(images), "images found.")
 print("|", len(labels), "labels found.")
@@ -103,23 +105,21 @@ show_before_after(raw_image, transformed_image)
 
 print("\nCreating datasets:")
 
-train_dataset = HandwrittenSentenceDataset(images_train, labels_train, train_transforms)
-val_dataset = HandwrittenSentenceDataset(images_val, labels_val, val_test_transforms)
-test_dataset = HandwrittenSentenceDataset(images_test, labels_test, val_test_transforms)
+train_dataset = HandwrittenSentenceDataset(images_train, labels_train, vocab, train_transforms)
+val_dataset = HandwrittenSentenceDataset(images_val, labels_val, vocab, val_test_transforms)
+test_dataset = HandwrittenSentenceDataset(images_test, labels_test, vocab, val_test_transforms)
 
 print("| Datasets ceated.")
 
 ## Create dataloaders
 
-BATCH_SIZE = 32
-
 print("\nCreating dataloaders:")
 
-train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=configs.BATCH_SIZE, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=configs.BATCH_SIZE, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=configs.BATCH_SIZE, shuffle=False)
 
-print(f"| Training dataloader: {len(train_loader.dataset)} samples in {len(train_loader)} batches of size {BATCH_SIZE}")
-print(f"| Validation dataloader: {len(val_loader.dataset)} samples in {len(val_loader)} batches of size {BATCH_SIZE}")
-print(f"| Test dataloader: {len(test_loader.dataset)} samples in {len(test_loader)} batches of size {BATCH_SIZE}")
+print(f"| Training dataloader: {len(train_loader.dataset)} samples in {len(train_loader)} batches of size {configs.BATCH_SIZE}")
+print(f"| Validation dataloader: {len(val_loader.dataset)} samples in {len(val_loader)} batches of size {configs.BATCH_SIZE}")
+print(f"| Test dataloader: {len(test_loader.dataset)} samples in {len(test_loader)} batches of size {configs.BATCH_SIZE}")
 print("Dataloaders created.")
